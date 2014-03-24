@@ -8,6 +8,7 @@ import javax.servlet.http.*;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Transaction;
 
 @SuppressWarnings("serial")
 public class GestionProfilServlet extends HttpServlet {
@@ -18,18 +19,20 @@ public class GestionProfilServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		super.doPost(req, resp);
 		String nom = req.getParameter("nom");
 		String a = req.getParameter("age");
 		int age = Integer.parseInt(a);
 		
 		DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService();
+		
+		Transaction tx = dataStore.beginTransaction();
 		Entity utilisateur = new Entity("utilisateurs");
 		utilisateur.setProperty("nom", nom);
 		utilisateur.setProperty("age", age);
 		dataStore.put(utilisateur);
+		tx.commit();
 		
-		resp.sendRedirect("/rechercheProfil");
+		resp.sendRedirect("/rechercheProfil?nom=" + nom);
 		
 	}
 	
