@@ -9,6 +9,10 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Transaction;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
+import com.google.appengine.api.taskqueue.TaskOptions.Method;
 
 @SuppressWarnings("serial")
 public class GestionProfilServlet extends HttpServlet {
@@ -22,6 +26,9 @@ public class GestionProfilServlet extends HttpServlet {
 		String nom = req.getParameter("nom");
 		String a = req.getParameter("age");
 		int age = Integer.parseInt(a);
+		
+		Queue queue = QueueFactory.getDefaultQueue();
+		queue.add(TaskOptions.Builder.withUrl("/tacheDeFond").param("nom", nom).method(Method.GET));
 		
 		DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService();
 		
